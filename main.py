@@ -103,16 +103,22 @@ def delete_character(id_character):
     cursor = connection.cursor()
 
     # Comando para deletar um personagem, atento ao Where
-    sql_command_delete = """
-    DELETE FROM Personagem WHERE id = ?
-    """
-    value = (id_character,)
-    cursor.execute(sql_command_delete, value)
+    cursor.execute("DELETE FROM Personagem WHERE id = ?", (id_character,))
     connection.commit()
     connection.close()
 
     print(f"\nPersonagem de ID {id_character} foi deletado do sistema.")
 
+def search_character_by_id(id_character):
+    # Usado para procurar um personagem em específico (ou nenhum se não tiver)
+    connection = sqlite3.connect("banco_rpg.db")
+    cursor = connection.cursor()
+
+    cursor.execute("SELECT * FROM Personagem WHERE id = ?", (id_character,))
+    character = cursor.fetchone()
+
+    connection.close()
+    return character # retorna a tupla com os dados do personagem
 
 
 # Verifica se esse arquivo está sendo rodado diretamente e chama a função
@@ -127,4 +133,4 @@ if __name__ == "__main__":
     list_character()
 
     # função de deletar 
-    # delete_character(id)
+    delete_character(3)
