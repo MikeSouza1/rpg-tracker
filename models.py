@@ -1,3 +1,6 @@
+# Arquivo onde ficarão os modelos de classe dos personagens; a classe base/mãe (Character)
+# As classes filhas/roles dos personagens (DPS, Support)
+
 # =================
 # BASE CLASS
 # =================

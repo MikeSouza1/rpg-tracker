@@ -1,3 +1,5 @@
+# Arquivo onde fica a criação da database dos personagens, bem como seu CRUD
+
 import sqlite3
 
 def configure_database():
@@ -133,4 +135,4 @@ if __name__ == "__main__":
     list_character()
 
     # função de deletar 
-    delete_character(3)
+    # delete_character(3)

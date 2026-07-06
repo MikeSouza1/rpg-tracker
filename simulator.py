@@ -1,3 +1,5 @@
+# Arquivo com a função de simular o dano do personagem (ou seu escudo gerado) baseado em uma fórmula simples
+
 from main import search_character_by_id
 from models import DPSCharacter, SupportCharacter
 
