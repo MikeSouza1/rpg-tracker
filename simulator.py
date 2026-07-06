@@ -4,28 +4,38 @@ from main import search_character_by_id
 from models import DPSCharacter, SupportCharacter
 
 def simulate_performance(id_character, role_type="DPS"):
-    data = search_character_by_id(id_character)
+    # Try para tentar executar o bloco
+    try:
+        data = search_character_by_id(id_character)
 
-    if data is None:
-        print("Personagem não encontrado no banco de dados.")
+        if data is None:
+            print("Personagem não encontrado no banco de dados.")
+        
+        id_char, name, level, hp, atk, crit_rate, crit_damage = data
+
+        # Instanciando o objeto com base na escolha da função.
+        if role_type.upper() == "DPS":
+            # cria-se um DPS com 15% de dano elemental passivo
+            character_obj = DPSCharacter(id_char, name, level, hp, atk, crit_rate, crit_damage, elemental_bonus=0.15)
+        else:
+            # cria-se um suporte com 20% de heal bonus
+            character_obj = SupportCharacter(id_char, name, level, hp, atk, crit_rate, crit_damage, heal_bonus=0.2)
+        
+        # Imprime o relatorio encapsulado dentro do próprio objeto
+        print(character_obj.get_performance_report())
+
+        # Se for suporte, é exibido também o escudo dele
+        if isinstance(character_obj, SupportCharacter):
+            shield = character_obj.calculate_shield_strenght()
+            print(f"-> Bônus de Suporte | Força do Escudo Gerado: {shield: .2f}\n")
     
-    id_char, name, level, hp, atk, crit_rate, crit_damage = data
-
-    # Instanciando o objeto com base na escolha da função.
-    if role_type.upper() == "DPS":
-        # cria-se um DPS com 15% de dano elemental passivo
-        character_obj = DPSCharacter(id_char, name, level, hp, atk, crit_rate, crit_damage, elemental_bonus=0.15)
-    else:
-        # cria-se um suporte com 20% de heal bonus
-        character_obj = SupportCharacter(id_char, name, level, hp, atk, crit_rate, crit_damage, heal_bonus=0.2)
+    # Se capturar um ValueError:
+    except ValueError as value_error:
+        print(f"\n[FALHA DE SEGURANÇA] Não foi possivel simular: {value_error}\n")
     
-    # Imprime o relatorio encapsulado dentro do próprio objeto
-    print(character_obj.get_performance_report())
-
-    # Se for suporte, é exibido também o escudo dele
-    if isinstance(character_obj, SupportCharacter):
-        shield = character_obj.calculate_shield_strenght()
-        print(f"-> Bônus de Suporte | Força do Escudo Gerado: {shield: .2f}\n")
+    # Se capturar qualquer outro erro de sistema:
+    except Exception as exception_error:
+        print(f"\n[ERRO CRÍTICO DE SISTEMA] Ocorreu uma falha inesperada: {exception_error}.")
     
 
 def calc_average_damage(id_character):

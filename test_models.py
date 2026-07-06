@@ -50,3 +50,18 @@ def test_support_character_shield():
 
     # Escudo = (10000 * 0.25) * (1 + 0.20) = 2500 * 1.2 = 3000.0
     assert test_support_character.calculate_shield_strenght() == pytest.approx(3000.0)
+
+# 4 - Validando a segurança da simulação para gerar erros em situações adversas
+
+def test_character_validation_security():
+    # teste 1: tentando criar personagem com taxa crítica impossivel (150%)
+    with pytest.raises(ValueError):
+        Character(1, "Crit Hack", level=90, base_hp=10000, base_atk=1000.0, crit_rate=150.0, crit_dmg=50.0)
+    
+    # teste 2: personagem com nível 0
+    with pytest.raises(ValueError):
+        Character(2, "Level Glitch", level=0, base_hp=10000, base_atk=1000.0, crit_rate=50.0, crit_dmg=150.0)
+    
+    # teste 3: personagem com nome em branco
+    with pytest.raises(ValueError):
+        Character(3, "", level=1, base_hp=10000, base_atk=1000.0, crit_rate=50.0, crit_dmg=150.0)

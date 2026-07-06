@@ -7,6 +7,23 @@
 
 class Character:
     def __init__(self, char_id, name, level, base_hp, base_atk, crit_rate, crit_dmg):
+        # Validação de regras dos atributos de personagem
+        if not name or not name.strip():
+            raise ValueError("Erro de Validação: O nome do personagem não pode ficar em branco.")
+        
+        if level < 1:
+            raise ValueError("Erro de Validação: O nível do personagem não pode ser menor que 1.")
+        
+        if base_hp <= 0 or base_atk <= 0:
+            raise ValueError("Erro de Validação: HP e Ataque Base devem ser maiores do que 0.")
+        
+        if crit_rate < 0 or crit_rate > 100:
+            raise ValueError("Erro de Validação: A Taxa Critica deve estar entre 0 e 100%.")
+        
+        if crit_dmg < 0:
+            raise ValueError("Erro de Validação: O Dano Critico não pode ser negativo.")
+
+        # Atribuição de valores após validação
         self.id = char_id
         self.name = name
         self.level = level
