@@ -143,7 +143,7 @@ if __name__ == "__main__":
     # adicionar primeiro personagem de teste
     # create_character("Kenneth", 99, 20000.0, 2300.0, 90.0, 250.0)
     # create_character("Lisanne", 76, 23000.0, 1600.0, 50.0, 130.0)
-    create_character("Seraph", 100, 25000.0, 2500.0, 105.0, 300.0)
+    # create_character("Seraph", 100, 25000.0, 2500.0, 105.0, 300.0)
     # update_character(1, 94, 20000.0, 2300.0)
 
     # função de listar
