@@ -1,6 +1,7 @@
 # Arquivo onde fica a criação da database dos personagens, bem como seu CRUD
 
 import sqlite3
+from models import Character
 
 def configure_database():
     # Abre a conexão com o banco de dados e o cria se não existir.
@@ -14,12 +15,12 @@ def configure_database():
     sql_command_create_table = """
     CREATE TABLE IF NOT EXISTS Personagem (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nome TEXT NOT NULL,
-        nível  INTEGER NOT NULL,
-        hp_base REAL,
-        atk_base REAL,
-        crit_rate REAL,
-        crit_damage REAL
+        nome TEXT NOT NULL CHECK(length(nome) > 0),
+        nível  INTEGER NOT NULL CHECK(nível >= 1),
+        hp_base REAL CHECK(hp_base > 0),
+        atk_base REAL CHECK(atk_base > 0),
+        crit_rate REAL CHECK(crit_rate >= 0 AND crit_rate <= 100),
+        crit_damage REAL CHECK(crit_damage >= 0)
     )
     """
 
@@ -33,23 +34,35 @@ def configure_database():
     print("Banco de dados pronto e tabela 'Personagem' garantida!")
 
 def create_character(name, level, hp, atk, crit_rate, crit_damage):
-    connection = sqlite3.connect("banco_rpg.db")
-    cursor = connection.cursor()
+    # Valida-se os dados antes de mais nada, invocando erro caso algum ocorra
+    try:
+        Character(0, name, level, hp, atk, crit_rate, crit_damage)
+    except ValueError as validation_error:
+        print(f"\n[BLOQUEADO PELA APLICAÇÃO] Não foi possivel salvar no Banco: {validation_error}")
+        return
+    
+    # Salva no banco de dados caso tenha passado da validação
+    try:
+        connection = sqlite3.connect("banco_rpg.db")
+        cursor = connection.cursor()
 
-    # Comando para inserir os dados. "?" são espaços reservados para evitar SQL Injection, garantindo que o que o usuário inserir seja tratado como texto apenas.
-    sql_command_insert = """
-    INSERT INTO Personagem (nome, nível, hp_base, atk_base, crit_rate, crit_damage)
-    VALUES (?, ?, ?, ?, ?, ?)
-    """
+        # Comando para inserir os dados. "?" são espaços reservados para evitar SQL Injection, garantindo que o que o usuário inserir seja tratado como texto apenas.
+        sql_command_insert = """
+        INSERT INTO Personagem (nome, nível, hp_base, atk_base, crit_rate, crit_damage)
+        VALUES (?, ?, ?, ?, ?, ?)
+        """
 
-    # Cria-se uma tupla com os valores adquiridos na função e então executa o comando na mesma ordem
-    values = (name, level, hp, atk, crit_rate, crit_damage)
-    cursor.execute(sql_command_insert, values)
+        # Cria-se uma tupla com os valores adquiridos na função e então executa o comando na mesma ordem
+        values = (name, level, hp, atk, crit_rate, crit_damage)
+        cursor.execute(sql_command_insert, values)
 
-    connection.commit()
-    connection.close()
+        connection.commit()
+        connection.close()
 
-    print(f"Personagem {name} cadastrado com sucesso!")
+        print(f"Personagem {name} cadastrado com sucesso!")
+    except sqlite3.IntegrityError as db_error:
+        # Se por algum motivo passar do primeiro try, há uma segunda checagem direto na DB.
+        print(f"\n[BLOQUEADO PELO BANCO DE DADOS] Violou restrição de integridade: {db_error}")
 
 def list_character():
     connection = sqlite3.connect("banco_rpg.db")
@@ -128,7 +141,9 @@ if __name__ == "__main__":
     configure_database()
 
     # adicionar primeiro personagem de teste
-    # create_character("Slime", 35, 400.0, 20.0, 5.0, 50.0)
+    # create_character("Kenneth", 99, 20000.0, 2300.0, 90.0, 250.0)
+    # create_character("Lisanne", 76, 23000.0, 1600.0, 50.0, 130.0)
+    create_character("Seraph", 100, 25000.0, 2500.0, 105.0, 300.0)
     # update_character(1, 94, 20000.0, 2300.0)
 
     # função de listar
